@@ -131,3 +131,21 @@ model Post {
 ```
 
 Isso configurará o banco de dados **SQLite** e construirá o modelo Post. O generator client sempre configura para você, não há necessidade de editar isso.
+
+# Criar a primeira migration
+
+O benefício de definir esse esquema SQL, é ter menos trabalho. Passando para um sistema de Gerenciamento de Banco de Dados Relacional (RDMS), criando um banco de dados, tabelas e adicione todos os campos necessários.
+
+Isso ajuda você a mover seu projeto do ambiente de desenvolvimento para o de produção ou entre outros desenvolvedores. Sua configuração de esquema real reside no código. Fica mais fácil transferir esse esquema de uma pessoa para outra ou da máquina do desenvolvedor para a máquina de produção. Sem ter que ir a um gerenciador de banco de dados.
+
+Além disso, se você estiver configurando o esquema manualmente em máquinas diferentes, deverá garantir que eles correspondam. Você não tem uma maneira automática de garantir que os esquemas estejam configurados corretamente.
+
+Se você cometer um erro e os esquemas do banco de dados não forem totalmente os mesmos da sua máquina para a outra, você poderá obter alguns bugs ao executar o aplicativo. Com o esquema já definido, você evita incompatibilidade de esquema. É por isso que as **migrations** de banco de dados são tão úteis.
+
+Para iniciar a **migration** do banco de dados **Prisma** para nosso propósito de desenvolvimento, executaremos o seguinte comando;
+
+```bash
+prisma migrate dev --name init
+```
+
+A partir do comando acima, estamos executando nossa primeira migração no modo de desenvolvimento, dando-lhe o nome **init**. Se você quiser usar um nome com mais de uma palavra, certifique-se de separar as palavras com sublinhado ou hífen. O comando também verificará se temos o **Prisma client** instalado. Se não o fizermos, ele irá instalá-lo automaticamente.
