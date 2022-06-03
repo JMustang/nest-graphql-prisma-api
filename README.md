@@ -71,3 +71,63 @@ Ao concluir este procedimento, você terá um aplicativo Nest.js totalmente conf
 Ao executar o comando acima, você ainda pode selecionar o gerenciador de pacotes que deseja usar, que é **yarn** ou **npm**.
 
 Quando o processo de instalação estiver concluído, uma pasta nest-graphql-prisma-api com todas as dependências do Nest.js será criada dentro do caminho que você executou o comando acima.
+
+# Instalando o Prisma CLI
+
+**O Prisma CLI** nos permite construir dinamicamente os modelos de aplicação. Inicializando novos recursos de aplicativos, gerando **Prisma Client** e analisando esquemas de banco de dados existentes. Dessa forma, podemos definir facilmente nosso esquema de projeto e conectá-lo ao banco de dados do projeto.
+
+O **Prisma CLI** será executado dentro do aplicativo **Nest.js** recém-gerado, portanto, certifique-se de alterar o diretório para a pasta **nest-graphql-prisma-api**.
+
+```bash
+  cd nest-graphql-prisma-api
+```
+
+Em seguida, você pode executar o seguinte comando e o Prisma será instalado globalmente como uma dependência deste projeto.
+
+```bash
+npm i -g prisma
+```
+
+Isso fará o download do **Prisma CLI** e do mecanismo **Prisma** para o sistema operacional em que você está.
+
+## Definindo nosso modelo de dados Prisma
+
+Agora podemos inicializar os modelos Prisma para nosso projeto.
+  
+```bash
+  prisma init
+```
+O comando acima irá criar;
+
+Uma pasta **prisma** contendo o arquivo **schema.prisma**. Neste arquivo, vamos implementar o modelo de posts.
+
+Um arquivo **.env**. Este arquivo contém configurações para se conectar ao banco de dados. Para o nosso caso, usaremos **SQLite**.
+
+Por padrão, o arquivo **.env** é configurado para o banco de dados **PostgreSQL**. Então, para usar o **SQLite**, edite-o da seguinte forma;
+
+```env
+DATABASE_URL="file:./dev.db"
+```
+
+Além disso, edite o arquivo **prisma/schema.prisma** da seguinte maneira;
+
+```prisma
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Post {
+    id        Int      @id @default(autoincrement())
+    title     String
+    content   String
+    published Boolean  @default(false)
+    createdAt DateTime @default(now())
+}
+```
+
+Isso configurará o banco de dados **SQLite** e construirá o modelo Post. O generator client sempre configura para você, não há necessidade de editar isso.
