@@ -149,3 +149,82 @@ prisma migrate dev --name init
 ```
 
 A partir do comando acima, estamos executando nossa primeira migração no modo de desenvolvimento, dando-lhe o nome **init**. Se você quiser usar um nome com mais de uma palavra, certifique-se de separar as palavras com sublinhado ou hífen. O comando também verificará se temos o **Prisma client** instalado. Se não o fizermos, ele irá instalá-lo automaticamente.
+
+
+# Configurando e instalando pacotes GraphQL
+
+- **@nestjs/graphql**: para fornecer interação entre **GraphQL** e **Nest.js**.
+- **graphql-tools**: Para fornecer um playground interativo do **GraphQL**.
+- **graphql**: para suporte com configuração nativa do **GraphQL**. ts-morph,@apollo/gateway, apollo-server-express: Funciona em segundo plano para iniciar o servidor **GraphQl** com sucesso.
+
+Para instalar os pacotes acima, execute este comando.
+
+```bash
+npm i @nestjs/graphql graphql-tools graphql ts-morph @apollo/gateway apollo-server-express@^2
+```
+
+## Gerar esquema GraphQL
+
+Dentro da pasta **src**, crie uma pasta **posts**. dentro de **posts**, crie um arquivo **schema.graphql**. Neste arquivo, vamos definir o esquema **GraphQL** da seguinte forma:
+
+```graphql
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    published: Boolean!
+    createdAt: String!
+  }
+
+  input NewPost {
+    title: String!
+    content: String!
+  }
+
+  input UpdatePost {
+    id:ID!
+    published: Boolean
+    title: String
+    content: String
+  }
+
+  type Query {
+    posts: [Post!]!
+    post(id: ID!): Post
+  }
+
+  type Mutation {
+    createPost(input: NewPost): Post!
+    updatePost(input: UpdatePost): Post
+    deletePost(id: ID!): Post
+  }
+  ```
+
+No código acima, estamos declarando os tipos e a entrada.
+
+Na pasta **src**, criaremos um arquivo **generate-typings.ts** que exportará os tipos do arquivo **.graphql** usando **@nestjs/graphql**. Adicione o seguinte conteúdo ao arquivo.
+
+```ts
+import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
+import { join } from 'path';
+const definitionsFactory = new GraphQLDefinitionsFactory();
+definitionsFactory.generate({
+  typePaths: ['./src/**/*.graphql'],
+  path: join(process.cwd(), 'src/graphql.ts'),
+  outputAs: 'class',
+});
+```
+
+A partir do bloco de código acima, os tipos serão gerados a partir de todos os arquivos **.graphql** e exportados para um arquivo **graphql.ts** na pasta src. Para executar este arquivo, abra o terminal do seu editor de texto e execute-o usando tsc.
+
+```bash
+tsc src/generate-typings.ts
+```
+
+Este comando criará um arquivo **Typescript** **generate-typings.js** transpilado. Execute o arquivo usando o node no terminal:
+
+```bash
+node src/generate-typings.js
+```
+
+Isso criará um arquivo **graphql.ts** na pasta **src**. O arquivo contém todos os arquivos exportados conversíveis com **Nest.js**.
