@@ -228,3 +228,27 @@ node src/generate-typings.js
 ```
 
 Isso criará um arquivo **graphql.ts** na pasta **src**. O arquivo contém todos os arquivos exportados conversíveis com **Nest.js**.
+
+# Adicionando o Prisma service
+
+Na pasta **src**, crie um arquivo **prisma.service.ts**. O arquivo se conectará ao cliente Prisma da seguinte forma:
+
+```ts
+import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+  async onModuleInit() {
+    await this.$connect();
+  }
+
+  async enableShutdownHooks(app: INestApplication) {
+    this.$on('beforeExit', async () => {
+      await app.close();
+    });
+  }
+}
+```
+
+A função **onModuleInit** se conecta ao **Prisma client**, que mantém a conexão com nosso banco de dados. Também estamos encerrando a conexão usando um event listener **beforeExit**.
