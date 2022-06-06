@@ -252,3 +252,68 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 ```
 
 A função **onModuleInit** se conecta ao **Prisma client**, que mantém a conexão com nosso banco de dados. Também estamos encerrando a conexão usando um event listener **beforeExit**.
+
+
+# Adicionando post service
+
+Na pasta **src/posts**, crie um arquivo **posts.service.ts** para conter a lógica da seguinte forma:
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { Post } from '@prisma/client';
+import { NewPost, UpdatePost } from 'src/graphql';
+
+@Injectable()
+export class PostService {
+  constructor(private prisma: PrismaService) {}
+
+  // Get a single post
+  async post(id: string): Promise<Post | null> {
+    return this.prisma.post.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+  }
+
+  // Get multiple posts
+  async posts(): Promise<Post[]> {
+    return this.prisma.post.findMany({});
+  }
+
+  // Create a post
+  async createPost(input: NewPost): Promise<Post> {
+    return this.prisma.post.create({
+      data: input,
+    });
+  }
+
+  // Update a post
+  async updatePost(params: UpdatePost): Promise<Post> {
+    const { id, published, title, content } = params;
+    return this.prisma.post.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        ...(published && { published }),
+        ...(title && { title }),
+        ...(content && { content }),
+      },
+    });
+  }
+
+  // delete a post
+  async deletePost(id: string): Promise<Post> {
+    return this.prisma.post.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+  }
+}
+```
+
+O arquivo acima tem toda a lógica que precisamos para dar suporte às nossas operações.
+
