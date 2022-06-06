@@ -356,3 +356,44 @@ export class PostResolvers {
   }
 }
 ```
+O arquivo acima expõe todas as nossas queries e mutações.
+
+# Conectando o Prisma service, post-service e post resolvers com providers
+
+Para que nossos resolvers e services sejam acessados, precisamos encapsulá-los em um módulo como providers. Assim, criamos um arquivo **posts.module.ts** dentro da pasta **src/posts** e adicionamos o seguinte:
+
+```ts
+import { Module } from '@nestjs/common';
+import { PostResolvers } from './posts.resolvers';
+import { PostService } from './posts.service';
+import { PrismaService } from 'src/prisma.service';
+
+@Module({
+  providers: [PostResolvers, PostService, PrismaService],
+})
+export class PostModule {}
+```
+
+No arquivo acima, estamos simplesmente adicionando os **PostResolvers** e **PostService** como providers.
+
+# Adicionando post Mutations
+
+Edite o arquivo **src/app.module.ts** da seguinte forma:
+
+```ts
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { PostModule } from './posts/posts.module';
+
+@Module({
+  imports: [
+    PostModule,
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.graphql'],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+No arquivo acima, estamos expondo o **GraphQLModule** e **PostModule** no array **imports** do módulo. Além disso, estamos especificando os **typePaths** para o **GraphQLModule**.

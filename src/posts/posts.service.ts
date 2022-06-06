@@ -5,7 +5,9 @@ import { NewPost, UpdatePost } from 'src/graphql';
 
 @Injectable()
 export class PostService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {
+    // Empty
+  }
 
   // Get retorna um post
   async post(id: string): Promise<Post | null> {
